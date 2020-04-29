@@ -11,8 +11,6 @@ namespace BSPUtils
             Length = reader.ReadInt32();
             Version = reader.ReadInt32();
             IDENT = reader.ReadInt32();
-
-            EmptyAtStart = Length == 0 && Offset == 0;
         }
 
         public int Offset { get; set; }
@@ -22,7 +20,6 @@ namespace BSPUtils
         public int Index { get; }
         public int DataOrder { get; set; } // The order it appears in the BSP file
         public byte[] Data { get; protected set; }
-        public bool EmptyAtStart { get; } // True if this is a 0 byte 0 offset lump
 
         public static Lump MakeLump(BinaryReader reader, int index)
         {
