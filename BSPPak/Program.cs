@@ -36,17 +36,26 @@ namespace BSPPak
                 contentPath = args[2];
             }
 
-            var files = FileFinder.Find(contentPath, true);
-            foreach (var file in files)
-            {
-                Console.WriteLine(file);
-            }
+            var files = FileFinder.Find(contentPath, FileFinder.HasFilterFile(contentPath));
 
             if (isDryRun)
             {
+                foreach (var item in files)
+                {
+                    Console.WriteLine(ToRelativePath(item, contentPath));
+                }
+                Console.WriteLine($"Found {files.Length} files matching the filter.");
                 Console.WriteLine("Finished, dry run");
                 return;
             }
+
+            if(files.Length == 0)
+            {
+                Console.WriteLine("No files found that matches the filter. Exiting.");
+                return;
+            }
+
+            Console.WriteLine($"Found {files.Length} files matching the filter.");
 
             if (!File.Exists(bspPath))
             {
@@ -64,17 +73,25 @@ namespace BSPPak
             var pakLump = (PakfileLump)bsp.Lumps[40];
             var archive = pakLump.OpenArchiveStream(ZipArchiveMode.Update);
 
-            Console.WriteLine("Zipping files");
-            foreach (var file in files)
+            for(var i = 0; i < files.Length; i++)
             {
-                var relPath = ToRelativePath(file, contentPath);
-                if (archive.GetEntry(relPath) != null)
+                if(i % 50 == 0)
                 {
-                    Console.WriteLine($"{relPath} already packed, ignoring.");
-                    continue;
+                    Console.WriteLine($"{i}/{files.Length} Zipping files...");
+                }
+                var file = files[i];
+
+                var relPath = ToRelativePath(file, contentPath);
+                var entry = archive.GetEntry(relPath);
+                if (entry != null)
+                {
+                    Console.WriteLine($"{relPath} already packed, overwriting...");
+                }
+                else
+                {
+                    entry = archive.CreateEntry(relPath, CompressionLevel.NoCompression);
                 }
 
-                var entry = archive.CreateEntry(relPath, CompressionLevel.NoCompression);
                 using var entryWriter = entry.Open();
                 using var fileReader = File.Open(file, FileMode.Open, FileAccess.Read);
                 fileReader.CopyTo(entryWriter);
@@ -87,14 +104,7 @@ namespace BSPPak
             using var bspWriter = new BinaryWriter(bspFile2);
             bsp.WriteBSP(bspWriter);
 
-            //archive = pakLump.OpenArchiveStream(ZipArchiveMode.Update);
-
-            //foreach (var zipArchiveEntry in archive.Entries)
-            //{
-            //    Console.WriteLine($"{zipArchiveEntry.Length} {zipArchiveEntry.Name} {zipArchiveEntry.FullName}");
-            //}
-
-            //pakLump.CloseArchiveStream(true);
+            Console.WriteLine("Done!");
         }
 
         private static string ToRelativePath(string fullPath, string relDir)
