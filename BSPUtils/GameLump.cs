@@ -1,8 +1,8 @@
 ﻿using System.IO;
 
-namespace BSPLumpExtract
+namespace BSPUtils
 {
-    class GameLump : Lump
+    public class GameLump : Lump
     {
         public GameLumpItem[] LumpItems;
 

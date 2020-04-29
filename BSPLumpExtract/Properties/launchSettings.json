@@ -3,10 +3,6 @@
     "BSPLumpExtract": {
       "commandName": "Project",
       "commandLineArgs": "\"F:\\SteamLibrary\\steamapps\\common\\GarrysMod\\garrysmod\\addons\\dis\\fm_sewers_dev\\maps\\test\\fm_sewers_dev.bsp\" 0"
-    },
-    "Compare": {
-      "commandName": "Project",
-      "commandLineArgs": "\"F:\\SteamLibrary\\steamapps\\common\\GarrysMod\\garrysmod\\addons\\dis\\fm_sewers_dev\\maps\\test\\fm_sewers_dev.bsp\" \"F:\\SteamLibrary\\steamapps\\common\\GarrysMod\\garrysmod\\addons\\dis\\fm_sewers_dev\\maps\\test\\VIDE result\\fm_sewers_dev.bsp\""
     }
   }
 }

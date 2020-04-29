@@ -1,9 +1,20 @@
 ﻿using System.IO;
 
-namespace BSPLumpExtract
+namespace BSPUtils
 {
-    class Lump
+    public class Lump
     {
+        protected Lump(BinaryReader reader, int index)
+        {
+            Index = index;
+            Offset = reader.ReadInt32();
+            Length = reader.ReadInt32();
+            Version = reader.ReadInt32();
+            IDENT = reader.ReadInt32();
+
+            EmptyAtStart = Length == 0 && Offset == 0;
+        }
+
         public int Offset { get; set; }
         public int Length { get; private set; }
         public int Version { get; }
@@ -22,17 +33,6 @@ namespace BSPLumpExtract
             };
         }
 
-        protected Lump(BinaryReader reader, int index)
-        {
-            Index = index;
-            Offset = reader.ReadInt32();
-            Length = reader.ReadInt32();
-            Version = reader.ReadInt32();
-            IDENT = reader.ReadInt32();
-
-            EmptyAtStart = Length == 0 && Offset == 0;
-        }
-
         public virtual void SetData(byte[] data)
         {
             Data = data;
@@ -40,7 +40,7 @@ namespace BSPLumpExtract
 
         public void Clear()
         {
-            Data = new byte[]{0};
+            Data = new byte[] {0};
             Length = Data.Length;
         }
 
@@ -59,7 +59,6 @@ namespace BSPLumpExtract
 
         public virtual void UpdateOffsets(int newDataOffset)
         {
-
         }
     }
 }

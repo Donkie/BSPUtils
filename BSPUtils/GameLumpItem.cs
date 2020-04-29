@@ -1,17 +1,9 @@
 ﻿using System.IO;
 
-namespace BSPLumpExtract
+namespace BSPUtils
 {
-    class GameLumpItem
+    public class GameLumpItem
     {
-        public int ID { get; }
-        public ushort Flags { get; }
-        public ushort Version { get; }
-        public int Offset { get; set; }
-        public int Length { get; }
-        public int LocalOffset { get; set; }
-        public byte[] Data { get; set; }
-
         public GameLumpItem(BinaryReader reader)
         {
             ID = reader.ReadInt32();
@@ -20,6 +12,14 @@ namespace BSPLumpExtract
             Offset = reader.ReadInt32();
             Length = reader.ReadInt32();
         }
+
+        public int ID { get; }
+        public ushort Flags { get; }
+        public ushort Version { get; }
+        public int Offset { get; set; }
+        public int Length { get; }
+        public int LocalOffset { get; set; }
+        public byte[] Data { get; set; }
 
         public void WriteHeader(BinaryWriter writer)
         {

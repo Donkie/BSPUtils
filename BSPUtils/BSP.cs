@@ -1,35 +1,24 @@
-﻿
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
-namespace BSPLumpExtract
+namespace BSPUtils
 {
-    class BSP
+    public class BSP
     {
         private const int HeaderLumps = 64;
         private const int VBSP = 0x50534256;
         private const int VBSPHeaderSize = 4 + 4 + 16 * HeaderLumps + 4;
         private const int LMPHeaderSize = 4 + 4 + 4 + 4 + 4;
 
-        public int Version { get; }
-        public Lump[] Lumps { get; }
-        public int Revision { get; }
-
         public BSP(BinaryReader reader)
         {
             // Read BSP Header
-            if (reader.ReadInt32() != VBSP)
-            {
-                throw new Exception("File not VBSP");
-            }
+            if (reader.ReadInt32() != VBSP) throw new Exception("File not VBSP");
 
             Version = reader.ReadInt32();
             Lumps = new Lump[HeaderLumps];
-            for (var i = 0; i < HeaderLumps; i++)
-            {
-                Lumps[i] = Lump.MakeLump(reader, i);
-            }
+            for (var i = 0; i < HeaderLumps; i++) Lumps[i] = Lump.MakeLump(reader, i);
 
             Revision = reader.ReadInt32();
 
@@ -42,11 +31,13 @@ namespace BSPLumpExtract
 
             // Store lump order based on where it is in the BSP file
             var lumpsList = Lumps.OrderBy(lump => lump.Offset).ToList();
-            for (var i = 0; i < lumpsList.Count; i++)
-            {
-                lumpsList[i].DataOrder = i;
-            }
+            for (var i = 0; i < lumpsList.Count; i++) lumpsList[i].DataOrder = i;
         }
+
+        public int Version { get; }
+        public Lump[] Lumps { get; }
+        public int Revision { get; }
+
         private static int RoundUp(int numToRound, int multiple)
         {
             var remainder = numToRound % multiple;
@@ -100,10 +91,7 @@ namespace BSPLumpExtract
             // Write header
             writer.Write(VBSP);
             writer.Write(Version);
-            foreach (var lump in Lumps)
-            {
-                lump.WriteHeader(writer);
-            }
+            foreach (var lump in Lumps) lump.WriteHeader(writer);
             writer.Write(Revision);
 
             // Write lump contents
