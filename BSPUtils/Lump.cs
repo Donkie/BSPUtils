@@ -26,6 +26,7 @@ namespace BSPUtils
             return index switch
             {
                 35 => new GameLump(reader),
+                40 => new PakfileLump(reader),
                 _ => new Lump(reader, index)
             };
         }
@@ -33,12 +34,12 @@ namespace BSPUtils
         public virtual void SetData(byte[] data)
         {
             Data = data;
+            Length = data.Length;
         }
 
         public void Clear()
         {
-            Data = new byte[] {0};
-            Length = Data.Length;
+            SetData(new byte[] {0});
         }
 
         public void WriteHeader(BinaryWriter writer)

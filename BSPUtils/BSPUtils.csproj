@@ -5,4 +5,8 @@
     <LangVersion>8</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MAB.DotIgnore" Version="3.0.0" />
+  </ItemGroup>
+
 </Project>
