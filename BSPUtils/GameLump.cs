@@ -1,60 +1,73 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace BSPUtils
 {
+    /// <summary>
+    /// Represents the game lump format in the BSP
+    /// </summary>
     public class GameLump : Lump
     {
-        public GameLumpItem[] LumpItems;
+        private const int GameLumpItemHeaderSize = 3 * sizeof(int) + 2 * sizeof(ushort);
 
         public GameLump(BinaryReader reader) : base(reader, 35)
         {
         }
 
-        public override void SetData(byte[] data)
-        {
-            Data = data;
-            ParseData();
-        }
+        public List<GameLumpItem> LumpItems { get; private set; }
 
-        private void ParseData()
+        private int GameLumpHeaderSize => sizeof(int) + GameLumpItemHeaderSize * LumpItems.Count;
+
+        /// <summary>
+        /// Parses the Data field into the array of LumpItems
+        /// </summary>
+        protected internal override void ParseData()
         {
             using var ms = new MemoryStream(Data);
             using var reader = new BinaryReader(ms);
 
-            // Load game lump headers
+            // Load game lump headers and data
             var lumpCount = reader.ReadInt32();
-            LumpItems = new GameLumpItem[lumpCount];
+            LumpItems = new List<GameLumpItem>(lumpCount);
             for (var i = 0; i < lumpCount; i++)
-            {
-                LumpItems[i] = new GameLumpItem(reader);
-                LumpItems[i].LocalOffset = LumpItems[i].Offset - Offset;
-            }
+                LumpItems.Add(new GameLumpItem(reader));
 
-            // Load game lump data
-            foreach (var gameLumpItem in LumpItems)
+            // Sort the lump items by file offset to preserve their order when writing later
+            LumpItems = LumpItems.OrderBy(item => item.Offset).ToList();
+        }
+
+        private void UpdateGameLumpItemOffsets(int lumpDataOffset)
+        {
+            var pos = lumpDataOffset + GameLumpHeaderSize;
+            foreach (var item in LumpItems)
             {
-                reader.BaseStream.Seek(gameLumpItem.LocalOffset, SeekOrigin.Begin);
-                gameLumpItem.Data = reader.ReadBytes(gameLumpItem.Length);
+                item.Offset = pos;
+                pos = Util.RoundUp(pos + item.Data.Length,
+                    4); // Game lump items should appear on int boundaries in the BSP file
             }
         }
 
-        public override void UpdateOffsets(int newDataOffset)
+        /// <summary>
+        /// Update the file offsets of the GameDataLumps.
+        /// </summary>
+        /// <param name="newDataOffset">The file offset of the data for this lump</param>
+        internal override void UpdateOffsets(int newDataOffset)
         {
+            UpdateGameLumpItemOffsets(newDataOffset);
+
             using var ms = new MemoryStream();
             using var writer = new BinaryWriter(ms);
 
             // Write game lump headers
-            writer.Write(LumpItems.Length);
+            writer.Write(LumpItems.Count);
             foreach (var gameLumpItem in LumpItems)
-            {
-                gameLumpItem.Offset = newDataOffset + gameLumpItem.LocalOffset;
                 gameLumpItem.WriteHeader(writer);
-            }
 
             // Write game lump data
             foreach (var gameLumpItem in LumpItems)
             {
-                writer.BaseStream.Seek(gameLumpItem.LocalOffset, SeekOrigin.Begin);
+                writer.BaseStream.Seek(gameLumpItem.Offset, SeekOrigin.Begin);
                 writer.Write(gameLumpItem.Data);
             }
 

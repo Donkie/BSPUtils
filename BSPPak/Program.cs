@@ -5,7 +5,7 @@ using BSPUtils;
 
 namespace BSPPak
 {
-    class Program
+    internal class Program
     {
         private static void Main(string[] args)
         {
@@ -14,8 +14,9 @@ namespace BSPPak
             {
                 Console.WriteLine("Usage: BSPPak \"C:/Path/To/Map.bsp\" \"C:/Path/To/Content/Folder\"");
                 Console.WriteLine("Usage: BSPPak -d \"C:/Path/To/Map.bsp\" \"C:/Path/To/Content/Folder\"");
-                Console.WriteLine("The content folder can contain a file named \".pakfilter\" which contains .gitignore-like syntax for matching which files to pack. " +
-                                  "Remember that the .pakfilter file matches inversely to a regular .gitignore, .gitignore acts as a blacklist while .pakfilter acts as a whitelist.");
+                Console.WriteLine(
+                    "The content folder can contain a file named \".pakfilter\" which contains .gitignore-like syntax for matching which files to pack. " +
+                    "Remember that the .pakfilter file matches inversely to a regular .gitignore, .gitignore acts as a blacklist while .pakfilter acts as a whitelist.");
                 Console.WriteLine("Use the -d flag to mark it as a dry run where the bsp will not get edited.");
                 return;
             }
@@ -36,26 +37,24 @@ namespace BSPPak
                 contentPath = args[2];
             }
 
-            var files = FileFinder.Find(contentPath, FileFinder.HasFilterFile(contentPath));
+            var files = FileFinder.Find(contentPath);
 
             if (isDryRun)
             {
                 foreach (var item in files)
-                {
                     Console.WriteLine(ToRelativePath(item, contentPath));
-                }
-                Console.WriteLine($"Found {files.Length} files matching the filter.");
+                Console.WriteLine($"Found {files.Count} files matching the filter.");
                 Console.WriteLine("Finished, dry run");
                 return;
             }
 
-            if(files.Length == 0)
+            if (files.Count == 0)
             {
                 Console.WriteLine("No files found that matches the filter. Exiting.");
                 return;
             }
 
-            Console.WriteLine($"Found {files.Length} files matching the filter.");
+            Console.WriteLine($"Found {files.Count} files matching the filter.");
 
             if (!File.Exists(bspPath))
             {
@@ -64,45 +63,35 @@ namespace BSPPak
             }
 
             Console.WriteLine("Reading and parsing BSP");
-            var bspFile = File.Open(bspPath, FileMode.Open, FileAccess.Read);
-            var reader = new BinaryReader(bspFile);
-            var bsp = new BSP(reader);
-            reader.Dispose();
-            bspFile.Dispose();
+            var bsp = new BSP(bspPath);
 
-            var pakLump = (PakfileLump)bsp.Lumps[40];
+            var pakLump = (PakfileLump) bsp.Lumps[40];
             var archive = pakLump.OpenArchiveStream(ZipArchiveMode.Update);
 
-            for(var i = 0; i < files.Length; i++)
+            var i = 0;
+            foreach (var file in files)
             {
-                if(i % 50 == 0)
-                {
-                    Console.WriteLine($"{i}/{files.Length} Zipping files...");
-                }
-                var file = files[i];
+                if (i % 50 == 0)
+                    Console.WriteLine($"{i}/{files.Count} Zipping files...");
 
                 var relPath = ToRelativePath(file, contentPath);
                 var entry = archive.GetEntry(relPath);
                 if (entry != null)
-                {
                     Console.WriteLine($"{relPath} already packed, overwriting...");
-                }
                 else
-                {
                     entry = archive.CreateEntry(relPath, CompressionLevel.NoCompression);
-                }
 
                 using var entryWriter = entry.Open();
                 using var fileReader = File.Open(file, FileMode.Open, FileAccess.Read);
                 fileReader.CopyTo(entryWriter);
+
+                i++;
             }
 
             pakLump.CloseArchiveStream(true);
 
             Console.WriteLine("Writing BSP");
-            using var bspFile2 = File.Open(bspPath, FileMode.Create, FileAccess.Write);
-            using var bspWriter = new BinaryWriter(bspFile2);
-            bsp.WriteBSP(bspWriter);
+            bsp.WriteBSP(bspPath);
 
             Console.WriteLine("Done!");
         }
@@ -110,7 +99,7 @@ namespace BSPPak
         private static string ToRelativePath(string fullPath, string relDir)
         {
             if (!fullPath.StartsWith(relDir))
-                throw new Exception("reldir is not a parent directory to fullpath!");
+                throw new ArgumentException("relDir is not a parent directory to fullPath!");
 
             return fullPath.Substring(relDir.Length).TrimStart('/', '\\');
         }

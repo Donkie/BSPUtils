@@ -5,7 +5,7 @@ using BSPUtils;
 
 namespace BSPLumpCompare
 {
-    class Program
+    internal class Program
     {
         private static void CompareBSP(BSP bsp1, BSP bsp2)
         {
@@ -22,10 +22,12 @@ namespace BSPLumpCompare
                     Console.Write($" Offset diff: 0x{l1.Offset:x8} vs 0x{l2.Offset:x8} ({diff})");
                 }
 
-                if (l1.Length != l2.Length)
+                if (l1.Data.Length != l2.Data.Length)
                 {
-                    var diff = l1.Length > l2.Length ? $"+{l1.Length - l2.Length}" : $"-{l2.Length - l1.Length}";
-                    Console.Write($" Length diff: {l1.Length} vs {l2.Length} ({diff})");
+                    var diff = l1.Data.Length > l2.Data.Length
+                        ? $"+{l1.Data.Length - l2.Data.Length}"
+                        : $"-{l2.Data.Length - l1.Data.Length}";
+                    Console.Write($" Length diff: {l1.Data.Length} vs {l2.Data.Length} ({diff})");
                 }
                 else
                 {
@@ -45,15 +47,15 @@ namespace BSPLumpCompare
                 return;
             }
 
-            var bspPath = args[0];
-            if (!File.Exists(bspPath))
+            var bsp1Path = args[0];
+            if (!File.Exists(bsp1Path))
             {
                 Console.WriteLine("Invalid bsp 1 specified");
                 return;
             }
 
             var bsp2Path = args[1];
-            if (!File.Exists(bspPath))
+            if (!File.Exists(bsp1Path))
             {
                 Console.WriteLine("Invalid bsp 2 specified");
                 return;
@@ -61,18 +63,10 @@ namespace BSPLumpCompare
 
             // Read BSP
             Console.WriteLine("Reading and parsing BSP 1");
-            var origFile = File.Open(bspPath, FileMode.Open, FileAccess.Read);
-            var reader = new BinaryReader(origFile);
-            var bsp1 = new BSP(reader);
-            reader.Dispose();
-            origFile.Dispose();
+            var bsp1 = new BSP(bsp1Path);
 
             Console.WriteLine("Reading and parsing BSP 2");
-            var origFile2 = File.Open(bsp2Path, FileMode.Open, FileAccess.Read);
-            var reader2 = new BinaryReader(origFile2);
-            var bsp2 = new BSP(reader2);
-            reader.Dispose();
-            origFile.Dispose();
+            var bsp2 = new BSP(bsp2Path);
 
             CompareBSP(bsp1, bsp2);
 
