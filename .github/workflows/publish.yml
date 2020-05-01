@@ -20,3 +20,4 @@ jobs:
           PROJECT_FILE_PATH: LibBSP/LibBSP.csproj
           PACKAGE_NAME: LibBSP
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
+          INCLUDE_SYMBOLS: false
