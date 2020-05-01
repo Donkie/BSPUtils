@@ -11,6 +11,6 @@ Lets you pack map content into the .bsp using an intelligent .gitignore-style fi
 Compares the offset, size and contents of BSP lumps.
 
 ### LibBSP
-The library that the above programs use. Available as a NuGet package.
+The library that the above programs use. Available as a NuGet package at https://www.nuget.org/packages/LibBSP/.
 
 Supports reading and editing raw lump data for any lump. Additionally contains various helping methods and classes for easier data manipulation.
