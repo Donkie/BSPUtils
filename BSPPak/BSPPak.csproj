@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BSPUtils\LibBSP.csproj" />
+    <ProjectReference Include="..\LibBSP\LibBSP.csproj" />
   </ItemGroup>
 
 </Project>
