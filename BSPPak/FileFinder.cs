@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using MAB.DotIgnore;
 
-namespace BSPUtils
+namespace BSPPak
 {
     /// <summary>
     /// Library used to find and filter files in a directory
