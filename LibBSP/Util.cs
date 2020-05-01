@@ -1,4 +1,4 @@
-namespace BSPUtils
+namespace LibBSP
 {
     internal static class Util
     {

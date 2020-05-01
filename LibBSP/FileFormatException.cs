@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BSPUtils
+namespace LibBSP
 {
     /// <summary>
     /// Exception thrown when a file doesn't meet the expected format

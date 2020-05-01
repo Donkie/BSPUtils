@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace BSPUtils
+namespace LibBSP
 {
     public class Lump
     {

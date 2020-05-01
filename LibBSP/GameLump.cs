@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace BSPUtils
+namespace LibBSP
 {
     /// <summary>
     /// Represents the game lump format in the BSP

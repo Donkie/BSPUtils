@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using BSPUtils;
+using LibBSP;
 
 namespace BSPLumpExtract
 {

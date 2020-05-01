@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace BSPUtils
+namespace LibBSP
 {
     /// <summary>
     /// Represents a data item in the game lump

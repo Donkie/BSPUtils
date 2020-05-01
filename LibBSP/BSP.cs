@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace BSPUtils
+namespace LibBSP
 {
     /// <summary>
     /// Contains the lumps and meta data of a BSP file, along with functions to read and write to .bsp and .lmp formats.
