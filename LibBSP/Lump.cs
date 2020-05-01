@@ -2,6 +2,9 @@
 
 namespace LibBSP
 {
+    /// <summary>
+    /// Represents a generic lump in the BSP format
+    /// </summary>
     public class Lump
     {
         private byte[] _data;
@@ -46,7 +49,7 @@ namespace LibBSP
         /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but is
         /// used to preserve the order that the source engine prefers.
         /// </summary>
-        internal int DataOrder { get; set; }
+        public int DataOrder { get; set; }
 
         /// <summary>
         /// Lump data. Will update any internal lump specific data structures when set.
@@ -113,14 +116,14 @@ namespace LibBSP
         /// Call to update any internal absolute file data offsets in the lump body
         /// </summary>
         /// <param name="newDataOffset">The file offset of the lump data body</param>
-        internal virtual void UpdateOffsets(int newDataOffset)
+        public virtual void UpdateOffsets(int newDataOffset)
         {
         }
 
         /// <summary>
         /// Call to parse the Data field into any specific lump implementation structures
         /// </summary>
-        protected internal virtual void ParseData()
+        protected virtual void ParseData()
         {
         }
     }

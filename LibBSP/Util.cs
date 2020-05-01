@@ -1,6 +1,6 @@
 namespace LibBSP
 {
-    internal static class Util
+    public static class Util
     {
         /// <summary>
         /// Rounds a number up to nearest multiple

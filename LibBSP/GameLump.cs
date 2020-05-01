@@ -22,7 +22,7 @@ namespace LibBSP
         /// <summary>
         /// Parses the Data field into the array of LumpItems
         /// </summary>
-        protected internal override void ParseData()
+        protected override void ParseData()
         {
             using var ms = new MemoryStream(Data);
             using var reader = new BinaryReader(ms);
@@ -52,7 +52,7 @@ namespace LibBSP
         /// Update the file offsets of the GameDataLumps.
         /// </summary>
         /// <param name="newDataOffset">The file offset of the data for this lump</param>
-        internal override void UpdateOffsets(int newDataOffset)
+        public override void UpdateOffsets(int newDataOffset)
         {
             UpdateGameLumpItemOffsets(newDataOffset);
 

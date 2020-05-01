@@ -4,6 +4,9 @@ using System.IO.Compression;
 
 namespace LibBSP
 {
+    /// <summary>
+    /// Represents the pak file lump in the BSP format
+    /// </summary>
     public class PakfileLump : Lump
     {
         private ZipArchive _zipArchive;
