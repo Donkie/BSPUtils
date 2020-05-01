@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<package>
+	<metadata>
+		<id>$id$</id>
+		<version>$version$</version>
+		<title>$title$</title>
+		<authors>$author$</authors>
+		<owners>$author$</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/Donkie/BSPUtils/tree/master/LibBSP</projectUrl>
+		<description>$description$</description>
+		<releaseNotes>Initial beta release.</releaseNotes>
+		<copyright>Copyright Daniel Hultgren 2020</copyright>
+		<tags>BSP LMP Lump Binary Space Partition Source Engine</tags>
+	</metadata>
+</package>
