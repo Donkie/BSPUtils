@@ -11,7 +11,7 @@ namespace LibBSP
     {
         private const int GameLumpItemHeaderSize = 3 * sizeof(int) + 2 * sizeof(ushort);
 
-        public GameLump(BinaryReader reader) : base(reader, 35)
+        public GameLump(BinaryReader reader) : base(reader, LumpType.GameLump)
         {
         }
 

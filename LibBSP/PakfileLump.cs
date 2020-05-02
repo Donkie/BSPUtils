@@ -13,7 +13,7 @@ namespace LibBSP
 
         private MemoryStream _zipMemoryStream;
 
-        public PakfileLump(BinaryReader reader) : base(reader, 40)
+        public PakfileLump(BinaryReader reader) : base(reader, LumpType.Pakfile)
         {
         }
 

@@ -9,7 +9,7 @@ namespace LibBSP
     {
         private byte[] _data;
 
-        protected Lump(BinaryReader reader, int index)
+        protected Lump(BinaryReader reader, LumpType index)
         {
             // Read header
             Index = index;
@@ -43,7 +43,7 @@ namespace LibBSP
         /// <summary>
         /// The lump index/type
         /// </summary>
-        public int Index { get; }
+        public LumpType Index { get; }
 
         /// <summary>
         /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but is
@@ -75,11 +75,13 @@ namespace LibBSP
         /// </returns>
         public static Lump MakeLump(BinaryReader reader, int index)
         {
-            return index switch
+            var lumpType = (LumpType) index;
+
+            return lumpType switch
             {
-                35 => new GameLump(reader),
-                40 => new PakfileLump(reader),
-                _ => new Lump(reader, index)
+                LumpType.GameLump => new GameLump(reader),
+                LumpType.Pakfile => new PakfileLump(reader),
+                _ => new Lump(reader, lumpType)
             };
         }
 

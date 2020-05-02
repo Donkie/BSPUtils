@@ -11,8 +11,8 @@ namespace BSPLumpCompare
         {
             foreach (var lump in bsp1.Lumps.OrderBy(lump => lump.Offset))
             {
-                Console.Write($"Lump {lump.Index}:");
-                var i = lump.Index;
+                var i = (int) lump.Index;
+                Console.Write($"Lump {i}:");
                 var l1 = bsp1.Lumps[i];
                 var l2 = bsp2.Lumps[i];
 

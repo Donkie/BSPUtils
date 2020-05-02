@@ -143,7 +143,7 @@ namespace LibBSP
             var lump = Lumps[lumpIndex];
 
             writer.Write(LMPHeaderSize);
-            writer.Write(lump.Index);
+            writer.Write((int) lump.Index);
             writer.Write(lump.Version);
             writer.Write(lump.Data.Length);
             writer.Write(Revision);
