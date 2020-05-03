@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace LibBSP
 {
@@ -22,7 +23,7 @@ namespace LibBSP
 
             // Seek to the data position, load the data then seek back again
             var prevPosition = reader.BaseStream.Position;
-            reader.BaseStream.Seek(Offset, SeekOrigin.Begin);
+            reader.BaseStream.Seek((int) Offset, SeekOrigin.Begin);
             Data = reader.ReadBytes(length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
         }
@@ -38,7 +39,7 @@ namespace LibBSP
         public int ID { get; }
         public ushort Flags { get; set; }
         public ushort Version { get; }
-        public int Offset { get; set; }
+        public int? Offset { get; set; }
         public byte[] Data { get; set; }
 
         /// <summary>
@@ -47,10 +48,13 @@ namespace LibBSP
         /// <param name="writer">The BinaryWriter stream</param>
         public void WriteHeader(BinaryWriter writer)
         {
+            if(Offset == null)
+                throw new InvalidOperationException("Offset must be set in order to write the header.");
+
             writer.Write(ID);
             writer.Write(Flags);
             writer.Write(Version);
-            writer.Write(Offset);
+            writer.Write((int) Offset);
             writer.Write(Data.Length);
         }
     }
