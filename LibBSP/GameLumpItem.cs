@@ -9,23 +9,25 @@ namespace LibBSP
     public class GameLumpItem
     {
         /// <summary>
-        /// Reads the header of a game lump item
+        /// Constructs a GameLumpItem using the header and data information from a BinaryReader. The reader stream is seek-ed to the end of the header after everything is read.
         /// </summary>
         /// <param name="reader">The BinaryReader stream</param>
-        public GameLumpItem(BinaryReader reader)
+        public static GameLumpItem FromStream(BinaryReader reader)
         {
-            ID = reader.ReadInt32();
-            Flags = reader.ReadUInt16();
-            Version = reader.ReadUInt16();
-            Offset = reader.ReadInt32();
+            var id = reader.ReadInt32();
+            var flags = reader.ReadUInt16();
+            var version = reader.ReadUInt16();
 
+            var offset = reader.ReadInt32();
             var length = reader.ReadInt32();
 
             // Seek to the data position, load the data then seek back again
             var prevPosition = reader.BaseStream.Position;
-            reader.BaseStream.Seek((int) Offset, SeekOrigin.Begin);
-            Data = reader.ReadBytes(length);
+            reader.BaseStream.Seek(offset, SeekOrigin.Begin);
+            var data = reader.ReadBytes(length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
+
+            return new GameLumpItem(id, flags, version, data);
         }
 
         public GameLumpItem(int id, ushort flags, ushort version, byte[] data)
@@ -37,24 +39,21 @@ namespace LibBSP
         }
 
         public int ID { get; }
-        public ushort Flags { get; set; }
+        public ushort Flags { get; }
         public ushort Version { get; }
-        public int? Offset { get; set; }
-        public byte[] Data { get; set; }
+        public byte[] Data { get; }
 
         /// <summary>
         /// Writes the header of the game lump item to the BinaryWriter stream
         /// </summary>
         /// <param name="writer">The BinaryWriter stream</param>
-        public void WriteHeader(BinaryWriter writer)
+        /// <param name="dataOffset">The absolute file offset of the data for this GameLumpItem</param>
+        public void WriteHeader(BinaryWriter writer, int dataOffset)
         {
-            if(Offset == null)
-                throw new InvalidOperationException("Offset must be set in order to write the header.");
-
             writer.Write(ID);
             writer.Write(Flags);
             writer.Write(Version);
-            writer.Write((int) Offset);
+            writer.Write(dataOffset);
             writer.Write(Data.Length);
         }
     }
