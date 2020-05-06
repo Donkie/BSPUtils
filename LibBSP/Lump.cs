@@ -21,8 +21,11 @@ namespace LibBSP
             // Read data
             var prevPosition = reader.BaseStream.Position;
             reader.BaseStream.Seek(Offset, SeekOrigin.Begin);
-            Data = reader.ReadBytes(length);
+            var data = new byte[length];
+            reader.Read(data, 0, length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
+
+            Data = data;
         }
 
         /// <summary>

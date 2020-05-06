@@ -24,7 +24,8 @@ namespace LibBSP
             // Seek to the data position, load the data then seek back again
             var prevPosition = reader.BaseStream.Position;
             reader.BaseStream.Seek(offset, SeekOrigin.Begin);
-            var data = reader.ReadBytes(length);
+            var data = new byte[length];
+            reader.Read(data, 0, length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
 
             return new GameLumpItem(id, flags, version, data);
