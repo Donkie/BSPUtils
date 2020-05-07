@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace LibBSP
 {
@@ -65,7 +64,7 @@ namespace LibBSP
         /// </summary>
         private void WriteData()
         {
-            if(_offsets.Length != LumpItems.Count)
+            if (_offsets.Length != LumpItems.Count)
                 throw new InvalidOperationException("Call UpdateOffsets after editing the LumpItems list.");
 
             using var ms = new MemoryStream();

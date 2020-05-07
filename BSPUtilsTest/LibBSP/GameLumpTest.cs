@@ -8,13 +8,13 @@ namespace BSPUtilsTest.LibBSP
 {
     public class GameLumpTest : IDisposable
     {
-        private static readonly Stack<BinaryReader> Readers = new Stack<BinaryReader>();
-
         public void Dispose()
         {
             foreach (var binaryReader in Readers)
                 binaryReader.Dispose();
         }
+
+        private static readonly Stack<BinaryReader> Readers = new Stack<BinaryReader>();
 
         private static BinaryReader OpenStream()
         {
@@ -59,7 +59,7 @@ namespace BSPUtilsTest.LibBSP
 
             // Seek back to where we were
             reader.BaseStream.Seek(lumpHeaderPos, SeekOrigin.Begin);
-            
+
             // Read the lump like normal, which also parses the raw lump data into the GameLumpItems list
             var lump = new GameLump(reader);
 
@@ -90,19 +90,6 @@ namespace BSPUtilsTest.LibBSP
             Assert.Equal(lump.LumpItems[2], newItem);
         }
 
-        [Fact]
-        public void TestGameLumpItemEquality()
-        {
-            var item1 = new GameLumpItem(3, 4, 5, new byte[] { 1, 3, 3, 7 });
-            var item2 = new GameLumpItem(3, 4, 5, new byte[] { 1, 3, 3, 7 });
-            var item3 = new GameLumpItem(5, 4, 5, new byte[] { 1, 3, 3, 7 });
-
-            Assert.Equal(item1, item2);
-            Assert.NotEqual(item2, item3);
-
-            Assert.IsType<int>(item1.GetHashCode());
-        }
-
         public static IEnumerable<object[]> GameLumpTestData()
         {
             var reader = OpenStream();
@@ -112,6 +99,19 @@ namespace BSPUtilsTest.LibBSP
             {
                 new object[] {reader}
             };
+        }
+
+        [Fact]
+        public void TestGameLumpItemEquality()
+        {
+            var item1 = new GameLumpItem(3, 4, 5, new byte[] {1, 3, 3, 7});
+            var item2 = new GameLumpItem(3, 4, 5, new byte[] {1, 3, 3, 7});
+            var item3 = new GameLumpItem(5, 4, 5, new byte[] {1, 3, 3, 7});
+
+            Assert.Equal(item1, item2);
+            Assert.NotEqual(item2, item3);
+
+            Assert.IsType<int>(item1.GetHashCode());
         }
     }
 }

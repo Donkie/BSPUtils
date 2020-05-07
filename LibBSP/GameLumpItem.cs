@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 
 namespace LibBSP
@@ -9,8 +8,32 @@ namespace LibBSP
     /// </summary>
     public class GameLumpItem
     {
+        public GameLumpItem(int id, ushort flags, ushort version, byte[] data)
+        {
+            ID = id;
+            Flags = flags;
+            Version = version;
+            Data = data;
+        }
+
+        public GameLumpItem(int id, ushort flags, ushort version, byte[] data, int offset) : this(id, flags, version, data)
+        {
+            Offset = offset;
+        }
+
+        public int ID { get; }
+        public ushort Flags { get; }
+        public ushort Version { get; }
+        public byte[] Data { get; }
+
         /// <summary>
-        /// Constructs a GameLumpItem using the header and data information from a BinaryReader. The reader stream is seek-ed to the end of the header after everything is read.
+        /// The file offset of the game lump item data chunk relative to the start of the game lump data chunk
+        /// </summary>
+        public int? Offset { get; }
+
+        /// <summary>
+        /// Constructs a GameLumpItem using the header and data information from a BinaryReader. The reader stream is seek-ed
+        /// to the end of the header after everything is read.
         /// </summary>
         /// <param name="reader">The BinaryReader stream</param>
         /// <param name="lumpDataOffset">The .bsp file offset to the lump data</param>
@@ -32,28 +55,6 @@ namespace LibBSP
 
             return new GameLumpItem(id, flags, version, data, offset);
         }
-
-        public GameLumpItem(int id, ushort flags, ushort version, byte[] data)
-        {
-            ID = id;
-            Flags = flags;
-            Version = version;
-            Data = data;
-        }
-
-        public GameLumpItem(int id, ushort flags, ushort version, byte[] data, int offset) : this(id, flags, version, data)
-        {
-            Offset = offset;
-        }
-
-        public int ID { get; }
-        public ushort Flags { get; }
-        public ushort Version { get; }
-        public byte[] Data { get; }
-        /// <summary>
-        /// The file offset of the game lump item data chunk relative to the start of the game lump data chunk
-        /// </summary>
-        public int? Offset { get; }
 
         /// <summary>
         /// Writes the header of the game lump item to the BinaryWriter stream

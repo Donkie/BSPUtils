@@ -49,8 +49,8 @@ namespace LibBSP
         public LumpType Index { get; }
 
         /// <summary>
-        /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but is
-        /// used to preserve the order that the source engine prefers.
+        /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but
+        /// is used to preserve the order that the source engine prefers.
         /// </summary>
         public int DataOrder { get; set; }
 
