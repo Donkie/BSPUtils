@@ -7,7 +7,7 @@ namespace LibBSP
     /// </summary>
     public class Lump
     {
-        private byte[] _data;
+        protected byte[] DataBytes;
 
         protected Lump(BinaryReader reader, LumpType index)
         {
@@ -25,7 +25,7 @@ namespace LibBSP
             reader.Read(data, 0, length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
 
-            Data = data;
+            DataBytes = data;
         }
 
         /// <summary>
@@ -57,14 +57,10 @@ namespace LibBSP
         /// <summary>
         /// Lump data. Will update any internal lump specific data structures when set.
         /// </summary>
-        public byte[] Data
+        public virtual byte[] Data
         {
-            get => _data;
-            set
-            {
-                _data = value;
-                ParseData();
-            }
+            get => DataBytes;
+            set => DataBytes = value;
         }
 
         /// <summary>
@@ -122,13 +118,6 @@ namespace LibBSP
         /// </summary>
         /// <param name="newDataOffset">The file offset of the lump data body</param>
         public virtual void UpdateOffsets(int newDataOffset)
-        {
-        }
-
-        /// <summary>
-        /// Call to parse the Data field into any specific lump implementation structures
-        /// </summary>
-        protected virtual void ParseData()
         {
         }
     }

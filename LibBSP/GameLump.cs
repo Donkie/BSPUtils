@@ -12,8 +12,11 @@ namespace LibBSP
     {
         private const int GameLumpItemHeaderSize = 3 * sizeof(int) + 2 * sizeof(ushort);
 
+        private int[] _offsets;
+
         public GameLump(BinaryReader reader) : base(reader, LumpType.GameLump)
         {
+            ReadData();
         }
 
         public List<GameLumpItem> LumpItems { get; private set; }
@@ -21,18 +24,66 @@ namespace LibBSP
         private int GameLumpHeaderSize => sizeof(int) + GameLumpItemHeaderSize * LumpItems.Count;
 
         /// <summary>
-        /// Parses the Data field into the array of LumpItems
+        /// Byte form of the GameLump data. Parses the GameLumpItem list on read, and sets it on write.
         /// </summary>
-        protected override void ParseData()
+        public override byte[] Data
         {
-            using var ms = new MemoryStream(Data);
+            get
+            {
+                WriteData();
+                return DataBytes;
+            }
+            set
+            {
+                DataBytes = value;
+                ReadData();
+            }
+        }
+
+        /// <summary>
+        /// Parses the _data field into the array of LumpItems
+        /// </summary>
+        private void ReadData()
+        {
+            using var ms = new MemoryStream(DataBytes);
             using var reader = new BinaryReader(ms);
 
             // Load game lump headers and data
             var lumpCount = reader.ReadInt32();
+            _offsets = new int[lumpCount];
             LumpItems = new List<GameLumpItem>(lumpCount);
             for (var i = 0; i < lumpCount; i++)
-                LumpItems.Add(GameLumpItem.FromStream(reader));
+            {
+                var lumpItem = GameLumpItem.FromStream(reader, Offset);
+                _offsets[i] = lumpItem.Offset ?? 0;
+                LumpItems.Add(lumpItem);
+            }
+        }
+
+        /// <summary>
+        /// Parses the array of LumpItems into the _data field
+        /// </summary>
+        private void WriteData()
+        {
+            if(_offsets.Length != LumpItems.Count)
+                throw new InvalidOperationException("Call UpdateOffsets after editing the LumpItems list.");
+
+            using var ms = new MemoryStream();
+            using var writer = new BinaryWriter(ms);
+
+            // Write game lump headers
+            writer.Write(LumpItems.Count);
+            for (var i = 0; i < LumpItems.Count; i++)
+                LumpItems[i].WriteHeader(writer, _offsets[i] + Offset); // Convert the relative game lump item data offset back to absolute position
+
+            // Write game lump data
+            for (var i = 0; i < LumpItems.Count; i++)
+            {
+                writer.BaseStream.Seek(_offsets[i], SeekOrigin.Begin);
+                writer.Write(LumpItems[i].Data);
+            }
+
+            DataBytes = ms.ToArray();
         }
 
         /// <summary>
@@ -40,7 +91,7 @@ namespace LibBSP
         /// </summary>
         /// <param name="lumpDataOffset">The absolute file offset of the GameLump data</param>
         /// <returns>A list of absolute file offsets</returns>
-        private IList<int> GetGameLumpItemOffsets(int lumpDataOffset)
+        private int[] GetGameLumpItemOffsets(int lumpDataOffset)
         {
             var offsets = new int[LumpItems.Count];
 
@@ -61,24 +112,7 @@ namespace LibBSP
         /// <param name="newDataOffset">The file offset of the data for this lump</param>
         public override void UpdateOffsets(int newDataOffset)
         {
-            var offsets = GetGameLumpItemOffsets(newDataOffset);
-
-            using var ms = new MemoryStream();
-            using var writer = new BinaryWriter(ms);
-
-            // Write game lump headers
-            writer.Write(LumpItems.Count);
-            for (var i = 0; i < LumpItems.Count; i++)
-                LumpItems[i].WriteHeader(writer, offsets[i]);
-
-            // Write game lump data
-            for (var i = 0; i < LumpItems.Count; i++)
-            {
-                writer.BaseStream.Seek(offsets[i], SeekOrigin.Begin);
-                writer.Write(LumpItems[i].Data);
-            }
-
-            Data = ms.ToArray();
+            _offsets = GetGameLumpItemOffsets(newDataOffset);
         }
     }
 }
