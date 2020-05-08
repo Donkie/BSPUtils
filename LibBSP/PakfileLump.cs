@@ -13,6 +13,8 @@ namespace LibBSP
 
         private MemoryStream _zipMemoryStream;
 
+        private ZipArchiveMode _zipArchiveMode;
+
         public PakfileLump(BinaryReader reader) : base(reader, LumpType.Pakfile)
         {
         }
@@ -33,18 +35,23 @@ namespace LibBSP
             _zipMemoryStream.Write(Data, 0, Data.Length);
             _zipMemoryStream.Seek(0, SeekOrigin.Begin);
 
+            _zipArchiveMode = archiveMode;
+
             _zipArchive = new ZipArchive(_zipMemoryStream, archiveMode);
             return _zipArchive;
         }
 
-        public void CloseArchiveStream(bool dataWritten)
+        /// <summary>
+        /// Closes the opened archive stream. Must be called to write the changed ZipArchive to the lump data.
+        /// </summary>
+        public void CloseArchiveStream()
         {
             if (_zipArchive == null)
                 throw new InvalidOperationException("The archive stream is not open.");
 
             _zipArchive.Dispose();
 
-            if (dataWritten)
+            if (_zipArchiveMode == ZipArchiveMode.Create || _zipArchiveMode == ZipArchiveMode.Update)
                 Data = _zipMemoryStream.ToArray();
 
             _zipMemoryStream.Dispose();
