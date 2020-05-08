@@ -21,7 +21,7 @@ namespace LibBSP
 
         /// <summary>
         /// Returns the lump data contents as a ZipArchive object which can be read and edited. Call
-        /// <see cref="CloseArchiveStream" /> when finished with the ZipArchive object.
+        /// <see cref="CloseArchiveStream" /> when finished with the ZipArchive object. Always use <see cref="CompressionLevel"/>.NoCompression when making entries.
         /// </summary>
         /// <param name="archiveMode">Which mode to open the zip archive in</param>
         /// <returns></returns>
