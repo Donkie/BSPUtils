@@ -88,7 +88,7 @@ namespace BSPPak
                 i++;
             }
 
-            pakLump.CloseArchiveStream(true);
+            pakLump.CloseArchiveStream();
 
             Console.WriteLine("Writing BSP");
             bsp.WriteBSP(bspPath);
