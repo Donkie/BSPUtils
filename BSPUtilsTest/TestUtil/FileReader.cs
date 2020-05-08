@@ -17,7 +17,7 @@ namespace BSPUtilsTest.TestUtil
         public BinaryReader OpenStream(string fileName)
         {
             // ReSharper disable once StringLiteralTypo
-            var stream = File.Open(Path.Combine("testdata", fileName), FileMode.Open, FileAccess.Read);
+            var stream = File.Open(Path.Combine("testdata", fileName), FileMode.Open, FileAccess.Read, FileShare.Read);
             var reader = new BinaryReader(stream);
             _readers.Add(reader);
             return reader;

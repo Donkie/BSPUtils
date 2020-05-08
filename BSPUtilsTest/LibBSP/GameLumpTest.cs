@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using BSPUtilsTest.TestUtil;
 using LibBSP;
@@ -16,33 +15,12 @@ namespace BSPUtilsTest.LibBSP
 
         private static readonly FileReader FileReader = new FileReader();
 
-        [Theory]
-        [MemberData(nameof(GameLumpTestData))]
-        public void TestGameLumpReadWrite(BinaryReader reader)
+        [Fact]
+        public void TestGameLumpAddItem()
         {
-            // Grab the raw lump data from the stream
-            var lumpHeaderPos = reader.BaseStream.Position;
-            var lumpDataPos = reader.ReadInt32();
-            var lumpDataLength = reader.ReadInt32();
+            var reader = FileReader.OpenStream("map.bsp");
+            reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
 
-            var gameLumpData = new byte[lumpDataLength];
-            reader.BaseStream.Seek(lumpDataPos, SeekOrigin.Begin);
-            reader.BaseStream.Read(gameLumpData, 0, lumpDataLength);
-
-            // Seek back to where we were
-            reader.BaseStream.Seek(lumpHeaderPos, SeekOrigin.Begin);
-
-            // Read the lump like normal, which also parses the raw lump data into the GameLumpItems list
-            var lump = new GameLump(reader);
-
-            // lump.Data is parsed from the GameLumpItems list on read, since we done no changes to the GameLumpItems list, this should be equal to the original raw data
-            Assert.Equal(gameLumpData, lump.Data);
-        }
-
-        [Theory]
-        [MemberData(nameof(GameLumpTestData))]
-        public void TestGameLumpAddItem(BinaryReader reader)
-        {
             var newItem = new GameLumpItem(3, 4, 5, new byte[] {1, 3, 3, 7});
 
             var lump = new GameLump(reader);
@@ -63,17 +41,6 @@ namespace BSPUtilsTest.LibBSP
 
             Assert.Equal(originalLumpCount + 1, lump.LumpItems.Count);
             Assert.Equal(lump.LumpItems[originalLumpCount], newItem);
-        }
-
-        public static IEnumerable<object[]> GameLumpTestData()
-        {
-            var reader = FileReader.OpenStream("map.bsp");
-            reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
-
-            return new List<object[]>
-            {
-                new object[] {reader}
-            };
         }
 
         [Fact]
@@ -109,6 +76,31 @@ namespace BSPUtilsTest.LibBSP
             Assert.Equal(4, lump.LumpItems[1].Version);
             Assert.Equal(12, lump.LumpItems[1].Data.Length);
             Assert.Equal(new byte[] {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, lump.LumpItems[1].Data);
+        }
+
+        [Fact]
+        public void TestGameLumpReadWrite()
+        {
+            var reader = FileReader.OpenStream("map.bsp");
+            reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
+
+            // Grab the raw lump data from the stream
+            var lumpHeaderPos = reader.BaseStream.Position;
+            var lumpDataPos = reader.ReadInt32();
+            var lumpDataLength = reader.ReadInt32();
+
+            var gameLumpData = new byte[lumpDataLength];
+            reader.BaseStream.Seek(lumpDataPos, SeekOrigin.Begin);
+            reader.BaseStream.Read(gameLumpData, 0, lumpDataLength);
+
+            // Seek back to where we were
+            reader.BaseStream.Seek(lumpHeaderPos, SeekOrigin.Begin);
+
+            // Read the lump like normal, which also parses the raw lump data into the GameLumpItems list
+            var lump = new GameLump(reader);
+
+            // lump.Data is parsed from the GameLumpItems list on read, since we done no changes to the GameLumpItems list, this should be equal to the original raw data
+            Assert.Equal(gameLumpData, lump.Data);
         }
     }
 }

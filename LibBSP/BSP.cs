@@ -30,7 +30,7 @@ namespace LibBSP
         /// <param name="bspPath">The absolute file path to the bsp file</param>
         public BSP(string bspPath)
         {
-            using var bspFile = File.Open(bspPath, FileMode.Open, FileAccess.Read);
+            using var bspFile = File.Open(bspPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var bspReader = new BinaryReader(bspFile);
             Read(bspReader);
         }
