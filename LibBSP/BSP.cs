@@ -113,12 +113,6 @@ namespace LibBSP
                 writer.Seek(lump.Offset, SeekOrigin.Begin);
                 lump.WriteData(writer);
             }
-
-            // Pad with zeros at the end until int boundary is reached
-            writer.Seek(0, SeekOrigin.End);
-            var bytesToWrite = Util.RoundUp((int) writer.BaseStream.Position, 4) - (int) writer.BaseStream.Position;
-            for (var i = 0; i < bytesToWrite; i++)
-                writer.Write((byte) 0);
         }
 
         /// <summary>
