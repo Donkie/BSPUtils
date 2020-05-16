@@ -7,7 +7,7 @@ namespace LibBSP
     /// </summary>
     public class Lump
     {
-        private byte[] _data;
+        protected byte[] DataBytes;
 
         protected Lump(BinaryReader reader, LumpType index)
         {
@@ -21,8 +21,11 @@ namespace LibBSP
             // Read data
             var prevPosition = reader.BaseStream.Position;
             reader.BaseStream.Seek(Offset, SeekOrigin.Begin);
-            Data = reader.ReadBytes(length);
+            var data = new byte[length];
+            reader.Read(data, 0, length);
             reader.BaseStream.Seek(prevPosition, SeekOrigin.Begin);
+
+            DataBytes = data;
         }
 
         /// <summary>
@@ -46,22 +49,18 @@ namespace LibBSP
         public LumpType Index { get; }
 
         /// <summary>
-        /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but is
-        /// used to preserve the order that the source engine prefers.
+        /// The order it should appear in the BSP file. This is generally not necessary due to the file format structure, but
+        /// is used to preserve the order that the source engine prefers.
         /// </summary>
         public int DataOrder { get; set; }
 
         /// <summary>
         /// Lump data. Will update any internal lump specific data structures when set.
         /// </summary>
-        public byte[] Data
+        public virtual byte[] Data
         {
-            get => _data;
-            set
-            {
-                _data = value;
-                ParseData();
-            }
+            get => DataBytes;
+            set => DataBytes = value;
         }
 
         /// <summary>
@@ -119,13 +118,6 @@ namespace LibBSP
         /// </summary>
         /// <param name="newDataOffset">The file offset of the lump data body</param>
         public virtual void UpdateOffsets(int newDataOffset)
-        {
-        }
-
-        /// <summary>
-        /// Call to parse the Data field into any specific lump implementation structures
-        /// </summary>
-        protected virtual void ParseData()
         {
         }
     }

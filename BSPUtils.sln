@@ -18,6 +18,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BSPLumpCompare", "BSPLumpCo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BSPPak", "BSPPak\BSPPak.csproj", "{6AD27C06-F8AB-4544-B89D-BB7B4C48356A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BSPUtilsTest", "BSPUtilsTest\BSPUtilsTest.csproj", "{3065B887-5858-44C0-8A1C-E755F84CE5C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{6AD27C06-F8AB-4544-B89D-BB7B4C48356A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AD27C06-F8AB-4544-B89D-BB7B4C48356A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AD27C06-F8AB-4544-B89D-BB7B4C48356A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3065B887-5858-44C0-8A1C-E755F84CE5C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3065B887-5858-44C0-8A1C-E755F84CE5C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3065B887-5858-44C0-8A1C-E755F84CE5C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3065B887-5858-44C0-8A1C-E755F84CE5C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
