@@ -14,6 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BSPLumpCompare\BSPLumpCompare.csproj" />
+    <ProjectReference Include="..\BSPLumpExtract\BSPLumpExtract.csproj" />
+    <ProjectReference Include="..\BSPPak\BSPPak.csproj" />
     <ProjectReference Include="..\LibBSP\LibBSP.csproj" />
   </ItemGroup>
 

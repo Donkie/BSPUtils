@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using CommandLine;
 using LibBSP;
 
@@ -8,18 +9,22 @@ namespace BSPLumpExtract
     public class Program
     {
         public const int ExitFail = 1;
+        private const int MinLumpIndex = 0;
+        private const int MaxLumpIndex = 63;
 
         /// <summary>
         /// Performs the lump extraction. Assumes that the options have been validated.
         /// </summary>
         /// <param name="opts">The lump extraction options</param>
-        public static void Process(Options opts)
+        /// <exception cref="ArgumentException">Thrown if opts.BSPPath is not a file path</exception>
+        /// <exception cref="LumpEmptyException">Thrown if the specified lump is already empty</exception>
+        public static void ExtractLump(Options opts)
         {
             var lumpIndex = opts.LumpIndex;
             var bspFolder = Path.GetDirectoryName(opts.BSPPath);
             var bspName = Path.GetFileNameWithoutExtension(opts.BSPPath);
 
-            if (bspFolder == null || bspName == null)
+            if (bspFolder == null || bspName == null || Directory.Exists(opts.BSPPath))
                 throw new ArgumentException("Invalid BSP path specified");
 
             // Read BSP
@@ -27,13 +32,12 @@ namespace BSPLumpExtract
             var bsp = new BSP(opts.BSPPath);
 
             if (bsp.Lumps[lumpIndex].Data.Length <= 1)
-            {
-                Console.WriteLine("Lump empty, nothing to do. Exiting.");
-                return;
-            }
+                throw new LumpEmptyException();
+
+            // True if we will modify the original BSP
+            var willModify = !opts.DontClear;
 
             // Backup original BSP
-            var willModify = !opts.DontClear;
             if (opts.MakeBackup && willModify)
             {
                 Console.WriteLine("Saving BSP backup");
@@ -49,11 +53,17 @@ namespace BSPLumpExtract
                 bsp.WriteLMP(lmpPath, lumpIndex);
             }
 
-            // Clear lump and write new BSP
+            // Clear lump
             if (!opts.DontClear)
             {
-                Console.WriteLine("Clearing lump in BSP and overwriting original file");
+                Console.WriteLine("Clearing lump");
                 bsp.Lumps[lumpIndex].Clear();
+            }
+
+            // Clear lump and write new BSP
+            if (willModify)
+            {
+                Console.WriteLine("Writing to original file");
                 bsp.WriteBSP(opts.BSPPath);
             }
 
@@ -64,23 +74,14 @@ namespace BSPLumpExtract
         /// Validates the options.
         /// </summary>
         /// <param name="opts">The lump extraction options</param>
-        private static void ParseOptions(Options opts)
+        /// <exception cref="InvalidOptionException">Thrown if opts.BSPPath is not a valid file or opts.LumpIndex is not a valid lump index.</exception>
+        public static void ValidateOptions(Options opts)
         {
             if (!File.Exists(opts.BSPPath))
-            {
-                Console.WriteLine("Invalid .bsp file specified.");
-                Environment.ExitCode = ExitFail;
-                return;
-            }
+                throw new InvalidOptionException("Invalid .bsp file specified.");
 
-            if (opts.LumpIndex < 0 || opts.LumpIndex > 63)
-            {
-                Console.WriteLine("Invalid lump index specified, must be between 0 and 63 inclusive.");
-                Environment.ExitCode = ExitFail;
-                return;
-            }
-
-            Process(opts);
+            if (opts.LumpIndex < MinLumpIndex || opts.LumpIndex > MaxLumpIndex)
+                throw new InvalidOptionException("Invalid lump index specified, must be between 0 and 63 inclusive.");
         }
 
         /// <summary>
@@ -90,7 +91,23 @@ namespace BSPLumpExtract
         private static void Main(string[] args)
         {
             Parser.Default.ParseArguments<Options>(args)
-                .WithParsed(ParseOptions);
+                .WithParsed(opts =>
+                {
+                    try
+                    {
+                        ValidateOptions(opts);
+                        ExtractLump(opts);
+                    }
+                    catch (LumpEmptyException)
+                    {
+                        Console.WriteLine("Lump empty, nothing to do.");
+                    }
+                    catch (InvalidOptionException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Environment.ExitCode = ExitFail;
+                    }
+                });
         }
 
         public class Options
