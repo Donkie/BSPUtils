@@ -19,7 +19,7 @@ namespace BSPUtilsTest.LibBSP
         public void TestClearLump()
         {
             // Read BSP, clear lump, write BSP, read again, confirm lump is cleared
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp = new BSP(reader);
 
             var lump = bsp.Lumps[(int) LumpType.Entities];

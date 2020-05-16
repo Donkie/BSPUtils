@@ -25,7 +25,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestBSPCustomLumpTypes()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp = new BSP(reader);
 
             Assert.IsType<GameLump>(bsp.Lumps[(int) LumpType.GameLump]);
@@ -38,7 +38,7 @@ namespace BSPUtilsTest.LibBSP
             string fileName = Path.GetTempPath() + Guid.NewGuid() + ".bsp";
 
             // Read BSP and then write to a temp file
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp1 = new BSP(reader);
             reader.Dispose();
 
@@ -58,7 +58,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestBSPGameDataContent()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp = new BSP(reader);
             var lump = (GameLump) bsp.Lumps[(int) LumpType.GameLump];
 
@@ -80,7 +80,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestBSPHeader()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp = new BSP(reader);
 
             Assert.Equal(20, bsp.Version);
@@ -94,7 +94,7 @@ namespace BSPUtilsTest.LibBSP
             using var binaryWriter = new BinaryWriter(ms);
 
             // Read and then write the BSP to the memory stream
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp1 = new BSP(reader);
             reader.Dispose();
 
@@ -123,7 +123,7 @@ namespace BSPUtilsTest.LibBSP
             string fileName = Path.GetTempPath() + Guid.NewGuid() + ".lmp";
 
             // Read BSP and then write to a temp file
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             var bsp1 = new BSP(reader);
             reader.Dispose();
 
@@ -146,7 +146,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestLMPWrite()
         {
-            var reader1 = FileReader.OpenStream("map.bsp");
+            var reader1 = FileReader.OpenStream("testdata/map.bsp");
             var bsp = new BSP(reader1);
 
             using var ms = new MemoryStream();
@@ -170,7 +170,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestNotVBSP()
         {
-            var reader = FileReader.OpenStream("map.vmf");
+            var reader = FileReader.OpenStream("testdata/map.vmf");
             Assert.Throws<FileFormatException>(() => new BSP(reader));
         }
     }

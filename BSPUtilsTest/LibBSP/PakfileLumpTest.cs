@@ -19,7 +19,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestPakfileLump()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.Pakfile * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
 
             var lump = new PakfileLump(reader);

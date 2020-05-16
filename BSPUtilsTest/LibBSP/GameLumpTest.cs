@@ -18,7 +18,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestGameLumpAddItem()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
 
             var newItem = new GameLumpItem(3, 4, 5, new byte[] {1, 3, 3, 7});
@@ -59,7 +59,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestGameLumpRead()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
 
             var lump = new GameLump(reader);
@@ -81,7 +81,7 @@ namespace BSPUtilsTest.LibBSP
         [Fact]
         public void TestGameLumpReadWrite()
         {
-            var reader = FileReader.OpenStream("map.bsp");
+            var reader = FileReader.OpenStream("testdata/map.bsp");
             reader.BaseStream.Seek(sizeof(int) * 2 + (int) LumpType.GameLump * (sizeof(int) * 3 + 4), SeekOrigin.Begin);
 
             // Grab the raw lump data from the stream
