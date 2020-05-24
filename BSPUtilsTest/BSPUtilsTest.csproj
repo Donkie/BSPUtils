@@ -21,6 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="testdata\.pakfilter">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="testdata\map.bsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
