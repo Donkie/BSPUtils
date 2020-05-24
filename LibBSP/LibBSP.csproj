@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>netstandard1.3</TargetFramework>
 		<LangVersion>8</LangVersion>
-		<Version>0.3.0</Version>
+		<Version>0.4.0</Version>
 		<Authors>Daniel Hultgren</Authors>
 		<Description>A library for interacting with the Binary Space Partition file format in the Source Engine created by Valve. Supports reading and editing raw lump data for any lump. Also supports reading and editing the pak lump files.</Description>
 		<Copyright>Daniel Hultgren</Copyright>
@@ -12,6 +12,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags></PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
 	<ItemGroup>
