@@ -14,10 +14,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BSPLumpExtract\BSPLumpExtract.csproj" />
+    <ProjectReference Include="..\BSPPak\BSPPak.csproj" />
     <ProjectReference Include="..\LibBSP\LibBSP.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="testdata\.pakfilter">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="testdata\map.bsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

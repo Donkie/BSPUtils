@@ -23,7 +23,7 @@ namespace BSPPak
         }
 
         /// <summary>
-        /// Returns an array of files contained in the specified directory and recursively in sub-directories.
+        /// Returns a collection of files contained in the specified directory and recursively in sub-directories.
         /// If the directory has a ".pakfilter" file, it will be used to filter which files to find.
         /// The .pakfilter file contains a list of filtering rules with the same syntax as the .gitignore file in Git. However,
         /// contrary to the .gitignore file which is a blacklist, the .pakfilter file is a whitelist.
