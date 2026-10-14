@@ -14,6 +14,6 @@ jobs:
         with:
           dotnet-version: 10.0.x
       - name: Pack
-        run: dotnet pack LibBSP/LibBSP.csproj --configuration Release --output out
+        run: dotnet pack LibBSP/LibBSP.csproj --configuration Release --output out -p:GeneratePackageOnBuild=false
       - name: Publish (skipped if this version is already on NuGet)
         run: dotnet nuget push "out/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
